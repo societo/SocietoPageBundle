@@ -1,0 +1,27 @@
+{##
+ # SocietoPageBundle
+ # Copyright (C) 2011 Kousuke Ebihara
+ #
+ # This program is under the EPL/GPL/LGPL triple license.
+ # Please see the Resources/meta/LICENSE file that was distributed with this file.
+ #}
+
+{% set topic_path = { 'Page' : path("_backend_page"), 'Delete Page' : none } %}
+{% set title = "Delete Page" %}
+
+{% extends skin_template_path('admin_base.html.twig') %}
+
+{% block body %}
+<p>Do you delete the following page?</p>
+<dl>
+    <dt>name</dt>
+    <dd>{{ page.name }}</dd>
+    <dt>pattern</dt>
+    <dd>{{ page.path }}</dd>
+</dl>
+
+<form action="{{ path('_backend_page_delete', {"name": page.name}) }}" method="post">
+    {{ form_widget(form) }}
+    <input type="submit">
+</form>
+{% endblock %}

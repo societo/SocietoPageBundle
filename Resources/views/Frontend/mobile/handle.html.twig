@@ -1,0 +1,41 @@
+{##
+ # SocietoPageBundle
+ # Copyright (C) 2011 Kousuke Ebihara
+ #
+ # This program is under the EPL/GPL/LGPL triple license.
+ # Please see the Resources/meta/LICENSE file that was distributed with this file.
+ #}
+
+{% extends skin_template_path('base.html.twig') %}
+
+{% block title %} - {{ title }}{% endblock %}
+
+{% block body %}
+    <div id="PageContainer">
+        {% if gadgets["head"] %}
+        <div id="PageHeader">
+        {% for gadget in gadgets["head"] %}
+            {{ render_gadget(gadget, parent_attributes, parameters) | raw }}
+        {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if gadgets["main_content"] %}
+        <section id="page_content_group">
+            <section id="page_main_content">
+            {% for gadget in gadgets["main_content"] %}
+                {{ render_gadget(gadget, parent_attributes, parameters) | raw }}
+            {% endfor %}
+            </section>
+        </section>
+        {% endif %}
+
+        {% if gadgets["foot"] %}
+        <div id="PageFooter">
+        {% for gadget in gadgets["foot"] %}
+            {{ render_gadget(gadget, parent_attributes, parameters) | raw }}
+        {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+{% endblock %}

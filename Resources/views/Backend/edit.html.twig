@@ -1,0 +1,132 @@
+{##
+ # SocietoPageBundle
+ # Copyright (C) 2011 Kousuke Ebihara
+ #
+ # This program is under the EPL/GPL/LGPL triple license.
+ # Please see the Resources/meta/LICENSE file that was distributed with this file.
+ #}
+
+{% set topic_path = { 'Page' : path("_backend_page"), 'Edit Page' : none } %}
+{% set title = "Edit Page" %}
+
+{% extends skin_template_path('admin_base.html.twig') %}
+
+{% block stylesheets %}
+<link href="{{ asset('js/facebox/src/facebox.css') }}" media="screen" rel="stylesheet" type="text/css"/>
+{% endblock %}
+
+{% block body %}
+<p><a href="{{ path("_backend_page_update", {"name" : page.name}) }}">Modify Page Information</a> | <a href="{{ path("_backend_page_delete", {"name" : page.name}) }}">Delete This Page</a></p>
+
+<h3>Page Information</h3>
+
+<dl>
+    <dt>Name</dt>
+    <dd>{{ page.name }}</dd>
+
+    <dt>URL</dt>
+    <dd><span class="prefixed_url">{{ url('_root') }}</span><strong>{{ page.path }}</strong></dd>
+
+    <dt>Title</dt>
+    <dd>{{ page.title }}</dd>
+
+    <dt>Published</dt>
+    <dd>{{ page.published ? "yes" : "no (non-adnimistrator member can't view)" }}</dd>
+</dl>
+
+<h3>Plot Page Gadgets</h3>
+
+<div id="plot_page_gadget">
+    <p>Please drag-and-drop the page gadgets to some places.</p>
+    <p>After ploting, do not forget to press the following "Save" button.</p>
+
+    <form id="change" action="{{ path('_backend_page_sort_gadget', {'page_name': page.name }) }}" method="post">
+        {% for k, v in changelist %}
+        <input type="hidden" id="gadget_position_{{k}}" name="gadget_position_{{k}}" value="{{ v }}">
+        {% endfor %}
+        <button type="submit">Save</button>
+    </form>
+
+    <p>Target device:</p>
+    <form action="{{ current_path(app.request.attributes) }}" method="get">
+        <select id="target_device" name="target_device">
+            <option value="full">PC</option>
+            <option value="mobile">Mobile</option>
+        </select>
+        <noscript>
+            <button type="submit">Change target device</button>
+        </noscript>
+    </form>
+
+    {# TODO: commonize #}
+    <div id="plotArea">
+        <div class="container">
+            <div class="plotable" id="head" data-flavour="{{ ["full", "mobile"] | json_encode }}">
+                {% for gadget in gadgets["head"] %}
+                <div class="plot_item order_{{ gadget.sortOrder }}" id="gadget_{{ gadget.id }}" data-flavour="{{ gadget.parameters.device | default(["full", "mobile"]) | json_encode }}">
+                <p><a href="#" onclick="editPageGadget('{{ path('_backend_page_edit_gadget', {'id': gadget.id }) | raw }}'); return false;">{{ gadget.caption | default(available_gadgets[gadget.name].caption) }}</a></p>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="plotable" id="sub_content" data-flavour="{{ "full" | json_encode }}">
+                {% for gadget in gadgets["sub_content"] %}
+                <div class="plot_item order_{{ gadget.sortOrder }}" id="gadget_{{ gadget.id }}" data-flavour="{{ gadget.parameters.device | default(["full", "mobile"]) | json_encode }}">
+                <p><a href="#" onclick="editPageGadget('{{ path('_backend_page_edit_gadget', {'id': gadget.id }) | raw }}'); return false;">{{ gadget.caption | default(available_gadgets[gadget.name].caption) }}</a></p>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="plotable" id="main_content" data-flavour="{{ ["full", "mobile"] | json_encode }}">
+                {% for gadget in gadgets["main_content"] %}
+                <div class="plot_item order_{{ gadget.sortOrder }}" id="gadget_{{ gadget.id }}" data-flavour="{{ gadget.parameters.device | default(["full", "mobile"]) | json_encode }}">
+                <p><a href="#" onclick="editPageGadget('{{ path('_backend_page_edit_gadget', {'id': gadget.id }) | raw }}'); return false;">{{ gadget.caption | default(available_gadgets[gadget.name].caption) }}</a></p>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="plotable" id="foot" data-flavour="{{ ["full", "mobile"] | json_encode }}">
+                {% for gadget in gadgets["foot"] %}
+                <div class="plot_item order_{{ gadget.sortOrder }}" id="gadget_{{ gadget.id }}" data-flavour="{{ gadget.parameters.device | default(["full", "mobile"]) | json_encode }}">
+                <p><a href="#" onclick="editPageGadget('{{ path('_backend_page_edit_gadget', {'id': gadget.id }) | raw }}'); return false;">{{ gadget.caption | default(available_gadgets[gadget.name].caption) }}</a></p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="plotable" id="side" data-flavour="{{ "full" | json_encode }}">
+            {% for gadget in gadgets["side"] %}
+            <div class="plot_item order_{{ gadget.sortOrder }}" id="gadget_{{ gadget.id }}" data-flavour="{{ gadget.parameters.device | default(["full", "mobile"]) | json_encode }}">
+            <p><a href="#" onclick="editPageGadget('{{ path('_backend_page_edit_gadget', {'id': gadget.id }) | raw }}'); return false;">{{ gadget.caption | default(available_gadgets[gadget.name].caption) }}</a></p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<div id="add_page_gadgets">
+    <p>Select a page gadget which you want to add to your page from the following, and drop it to any places of plot area.</p>
+
+    <dl>
+        <dt>Filter</dt>
+        <dd><input type="text" name="filter_gadget" id="filter_gadget" onkeyup="filterPageGadget()"></dd>
+    </dl>
+
+    <div class="gadget_list">
+    {% for key, available_gadget in available_gadgets %}
+        <dl class="gadget_item">
+            <dt><a href="#" onclick="addPageGadget('{{ path('_backend_page_add_gadget', {'page_name': page.name, 'gadget_name' : key }) | raw }}'); return false;">{{ available_gadget.caption }}</a></dt>
+            <dt class="image"><a href="#" onclick="addPageGadget('{{ path('_backend_page_add_gadget', {'page_name': page.name, 'gadget_name' : key }) | raw }}'); return false;"><img src="{{ available_gadget.image | default(asset('bundles/societodefaultskinplugin/images/societo-gadget-default-image_' ~ cycle(['001', '002', '003', '004'], (key | length)) ~ '.png')) }}" alt="available_gadget.caption" width="100" height="100" /></a></dt>
+            <dd>{{ available_gadget.description }}</dd>
+        </dl>
+    {% else %}
+        <p>There is no available page gadgets.</p>
+    {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script src="{{ asset('js/facebox/src/facebox.js') }}"></script>
+<script src="{{ asset('bundles/societopage/js/plot-facebox.js') }}"></script>
+{% endblock %}

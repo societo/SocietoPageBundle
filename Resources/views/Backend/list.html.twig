@@ -1,0 +1,38 @@
+{##
+ # SocietoPageBundle
+ # Copyright (C) 2011 Kousuke Ebihara
+ #
+ # This program is under the EPL/GPL/LGPL triple license.
+ # Please see the Resources/meta/LICENSE file that was distributed with this file.
+ #}
+
+{% set topic_path = { 'Page' :  none } %}
+{% set title = "Managing Page" %}
+
+{% extends skin_template_path('admin_base.html.twig') %}
+
+{% block body %}
+<p><a href="{{ path('_backend_page_create') }}">Create New</a></p>
+<table>
+    <thead>
+        <tr>
+            <th>name</th>
+            <th>path</th>
+            <th>title</th>
+            <th>last updated</th>
+        </tr>
+    </thead>
+{% for page in pages %}
+    <tr>
+        <td><a href="{{ path('_backend_page_edit', { 'name': page.name }) }}">{{ page.name }}</a></td>
+        <td>/{{ page.path }}</td>
+        <td>{{ page.title }}</td>
+        <td>{{ page.updatedAt | date("Y-m-d H:i:s") }}</td>
+    </tr>
+{% else %}
+    <tr>
+        <td colspan="3">There are no pages</td>
+    </tr>
+{% endfor %}
+</table>
+{% endblock %}

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="societo.page.controller.backend" class="Societo\PageBundle\Controller\BackendController">
+            <call method="setContainer">
+                <argument type="service" id="service_container" />
+            </call>
+        </service>
+
+        <service id="societo.page.gadget.manager" class="Societo\PageBundle\PageGadget\Manager">
+            <argument type="service" id="service_container" />
+        </service>
+
+        <service id="societo.page.parameter.manager" class="Societo\PageBundle\Routing\SelectableParameterManager">
+            <argument type="service" id="event_dispatcher" />
+        </service>
+
+        <service id="societo.twig.extension.page" class="Societo\PageBundle\Twig\Extension\PageExtension" public="false">
+            <argument type="service" id="service_container" />
+            <tag name="twig.extension" />
+        </service>
+    </services>
+</container>

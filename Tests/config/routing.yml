@@ -1,0 +1,14 @@
+##
+# This file is applied CC0 <http://creativecommons.org/publicdomain/zero/1.0/>
+#
+example:
+    pattern:  /example
+    defaults: { _controller: SocietoPageBundle:Frontend:handle, name: "example_page" }
+
+example2:
+    pattern:  /example2
+    defaults: { _controller: SocietoPageBundle:Frontend:handle, name: "example_page_2" }
+
+example3:
+    pattern:  /example3
+    defaults: { _controller: SocietoPageBundle:Frontend:handle, name: "example_page_3" }

@@ -1,0 +1,29 @@
+{##
+ # SocietoPageBundle
+ # Copyright (C) 2011 Kousuke Ebihara
+ #
+ # This program is under the EPL/GPL/LGPL triple license.
+ # Please see the Resources/meta/LICENSE file that was distributed with this file.
+ #}
+
+{% set topic_path = { 'Page' : path("_backend_page"), 'Add Gadget' : none } %}
+{% set title = "Edit Gadget" %}
+
+{% extends app.request.xmlHttpRequest ? skin_template_path('ajax_content.html.twig') : skin_template_path('admin_base.html.twig') %}
+
+{% block body %}
+<p>Please fill the following gadget configuration what you want to create:</p>
+{% if (app.request.xmlHttpRequest) %}
+<p><a href="{{ path('_backend_page_add_gadget', {'page_name': page_name, 'gadget_name' : gadget_name }) }}">[Edit in full-sized window]</a></p>
+{% endif %}
+
+<div class="gadget_info">
+    <div class="title">{{ gadget_info.caption }}</div>
+    <div class="description">{{ gadget_info.description }}</div>
+</div>
+
+<form action="{{ path('_backend_page_add_gadget', {'page_name': page_name, 'gadget_name' : gadget_name }) }}" method="post">
+    {{ form_widget(form) }}
+    <input type="submit" />
+</form>
+{% endblock %}

@@ -1,0 +1,81 @@
+{##
+ # SocietoPageBundle
+ # Copyright (C) 2011 Kousuke Ebihara
+ #
+ # This program is under the EPL/GPL/LGPL triple license.
+ # Please see the Resources/meta/LICENSE file that was distributed with this file.
+ #}
+
+{% set topic_path = { 'Page' : path("_backend_page"), 'Edit Page' : none } %}
+{% set title = page.new ? "Creating New Page" : "Modify Page Information" %}
+
+{% extends skin_template_path('admin_base.html.twig') %}
+
+{% block body %}
+{% if page.new %}
+<form action="{{ path('_backend_page_create') }}" method="post">
+{% else %}
+<form action="{{ path('_backend_page_update', {'name' : page.name}) }}" method="post">
+{% endif %}
+<table>
+    {{ form_errors(form) }}
+
+    <tr>
+        <th>{{ form_label(form.name) }}</th>
+        <td>
+            <div class="error">
+            {{ form_errors(form.name) }}
+            </div>
+            {{ form_widget(form.name) }}
+            {{ form_help(form.name, "You may use alphabet (uppercase or lowercase), number, and underscore (_)") }}
+        </td>
+    </tr>
+
+    <tr>
+        <th>{{ form_label(form.path, "URL") }}</th>
+        <td>
+            <div class="error">
+            {{ form_errors(form.path) }}
+            </div>
+            {{ url('_root') }}{{ form_widget(form.path) }}
+
+            <ul class="help">
+                <li>You can use the following variables (Result of using unlisted variables is undefined):<ul>
+                    {% for parameter, description in available_parameters %}
+                        <li><strong>{{ "{" ~ parameter ~ "}" }}</strong></li>
+                    {% endfor %}
+                </ul></li>
+                <li>A variable with <strong>"?"</strong> means <strong>an optional parameter</strong> (e.g. {member?})</li>
+            </ul>
+        </td>
+    </tr>
+
+    <tr>
+        <th>{{ form_label(form.title) }}</th>
+        <td>
+            <div class="error">
+            {{ form_errors(form.title) }}
+            </div>
+            {{ form_widget(form.title) }}
+
+            <ul class="help">
+                <li>This is used in content of &lt;title&gt; element</li>
+                <li>Default is page name</li>
+                <li>You can use variable of URL as string (e.g. "This is {member}'s Page")</li>
+            </ul>
+        </td>
+    </tr>
+
+    <tr>
+        <th>{{ form_label(form.published) }}</th>
+        <td>
+            {{ form_widget(form.published) }}
+            {{ form_help(form.published, "Only administrator can access to un-published pages") }}
+        </td>
+    </tr>
+
+    {{ form_rest(form) }}
+</table>
+<input type="submit" />
+</form>
+{% endblock %}

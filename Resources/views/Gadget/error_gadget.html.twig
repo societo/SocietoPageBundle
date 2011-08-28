@@ -1,0 +1,20 @@
+{##
+ # SocietoPageBundle
+ # Copyright (C) 2011 Kousuke Ebihara
+ #
+ # This program is under the EPL/GPL/LGPL triple license.
+ # Please see the Resources/meta/LICENSE file that was distributed with this file.
+ #}
+
+{% extends skin_template_path('normal_gadget.html.twig') %}
+
+{% block content %}
+{% if app.debug %}
+<p class="error">{{ exception_class_name | abbr_class }} : {{ exception.message }} ({{ exception.file }} at line: {{ exception.line }})</p>
+<pre style="overflow: scroll">
+{{ exception.traceAsString }}
+</pre>
+{% else %}
+<p class="error">Sorry! Some errors occurred while rendering this content.</p>
+{% endif %}
+{% endblock %}

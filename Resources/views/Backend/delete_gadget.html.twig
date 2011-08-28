@@ -1,0 +1,35 @@
+{##
+ # SocietoPageBundle
+ # Copyright (C) 2011 Kousuke Ebihara
+ #
+ # This program is under the EPL/GPL/LGPL triple license.
+ # Please see the Resources/meta/LICENSE file that was distributed with this file.
+ #}
+
+{% set topic_path = { 'Page' : path("_backend_page"), 'Delete Gadget' : none } %}
+{% set title = "Delete Gadget" %}
+
+{% extends app.request.xmlHttpRequest ? skin_template_path('ajax_content.html.twig') : skin_template_path('admin_base.html.twig') %}
+
+{% block body %}
+<p>Do you want to delete the following gadget?</p>
+
+<div class="gadget_info">
+    <div class="title">{{ gadget_info.caption }}</div>
+    <div class="description">{{ gadget_info.description }}</div>
+</div>
+
+<table>
+{% for key, parameter in gadget.parameters %}
+<tr>
+<th>{{ key }}</th>
+<td>{{ parameter }}</td>
+</tr>
+{% endfor %}
+</table>
+
+<form action="{{ path('_backend_page_delete_gadget', {'id': gadget.id }) }}" method="post">
+    {{ form_widget(form) }}
+    <input type="submit" />
+</form>
+{% endblock %}

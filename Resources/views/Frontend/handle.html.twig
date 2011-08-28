@@ -1,0 +1,59 @@
+{##
+ # SocietoPageBundle
+ # Copyright (C) 2011 Kousuke Ebihara
+ #
+ # This program is under the EPL/GPL/LGPL triple license.
+ # Please see the Resources/meta/LICENSE file that was distributed with this file.
+ #}
+
+{% extends skin_template_path('base.html.twig') %}
+
+{% block title %} - {{ title }}{% endblock %}
+
+{% block body %}
+    <section id="page">
+        {% if gadgets["head"] %}
+        <header id="page_header">
+        {% for gadget in gadgets["head"] %}
+            {{ render_gadget(gadget, parent_attributes, parameters) | raw }}
+        {% endfor %}
+        </header>
+        {% endif %}
+
+        {% if gadgets["sub_content"] or gadgets["main_content"] %}
+        <section id="page_content_group">
+            {% if gadgets["sub_content"] %}
+            <section id="page_sub_content">
+            {% for gadget in gadgets["sub_content"] %}
+                {{ render_gadget(gadget, parent_attributes, parameters) | raw }}
+            {% endfor %}
+            </section>
+            {% endif %}
+
+            {% if gadgets["main_content"] %}
+            <section id="page_main_content">
+            {% for gadget in gadgets["main_content"] %}
+                {{ render_gadget(gadget, parent_attributes, parameters) | raw }}
+            {% endfor %}
+            </section>
+            {% endif %}
+        </section>
+        {% endif %}
+
+        {% if gadgets["foot"] %}
+        <footer id="page_footer">
+        {% for gadget in gadgets["foot"] %}
+            {{ render_gadget(gadget, parent_attributes, parameters) | raw }}
+        {% endfor %}
+        </footer>
+        {% endif %}
+    </section>
+
+    {% if gadgets["side"] %}
+    <section id="page_sidebar">
+    {% for gadget in gadgets["side"] %}
+        {{ render_gadget(gadget, parent_attributes, parameters) | raw }}
+    {% endfor %}
+    </section>
+    {% endif %}
+{% endblock %}
