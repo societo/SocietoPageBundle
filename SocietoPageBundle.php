@@ -39,6 +39,9 @@ class SocietoPageBundle extends Bundle
 
             if (isset($parameters['gadget'])) {
                 $parameters['gadget'] = $em->getRepository('SocietoPageBundle:PageGadget')->find($parameters['gadget']);
+                if (!$parameters['gadget']) {
+                    throw new \Exception('Gadget not found');
+                }
             }
 
             $event->setParameters($parameters);
